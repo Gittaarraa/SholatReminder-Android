@@ -16,6 +16,11 @@ class MainActivity : AppCompatActivity() {
 
     private var dataSubuh = mutableListOf<String>()
     private var dataDzuhur = mutableListOf<String>()
+    private var dataAshar = mutableListOf<String>()
+    private var dataMagrib = mutableListOf<String>()
+    private var dataIsya = mutableListOf<String>()
+    private var dataWaktu = mutableListOf<String>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +44,24 @@ class MainActivity : AppCompatActivity() {
                     for (i in hasil2){
                         dataSubuh.add(i?.times?.fajr.toString())
                         dataDzuhur.add(i?.times?.dhuhr.toString())
+                        dataAshar.add(i?.times?.asr.toString())
+                        dataMagrib.add(i?.times?.maghrib.toString())
+                        dataIsya.add(i?.times?.isha.toString())
+                        dataWaktu.add(i?.date?.gregorian.toString())
 
                         rvSubuh.adapter = Adapter(dataSubuh)
                         rvDzuhur.adapter = Adapter(dataDzuhur)
+                        rvAshar.adapter = Adapter(dataAshar)
+                        rvMaghrib.adapter = Adapter(dataMagrib)
+                        rvIsya.adapter = Adapter(dataIsya)
+                        rvWaktu.adapter = Adapter(dataWaktu)
 
                         rvSubuh.layoutManager = LinearLayoutManager(this@MainActivity)
                         rvDzuhur.layoutManager = LinearLayoutManager(this@MainActivity)
+                        rvAshar.layoutManager = LinearLayoutManager(this@MainActivity)
+                        rvMaghrib.layoutManager = LinearLayoutManager(this@MainActivity)
+                        rvIsya.layoutManager = LinearLayoutManager(this@MainActivity)
+                        rvWaktu.layoutManager = LinearLayoutManager(this@MainActivity)
                     }
                 }
             }
