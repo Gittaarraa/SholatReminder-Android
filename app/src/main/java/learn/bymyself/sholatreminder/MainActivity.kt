@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import learn.bymyself.sholatreminder.Network.Config
 import learn.bymyself.sholatreminder.Network.JadwalModel
+import learn.bymyself.sholatreminder.Network.Location
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,6 +40,19 @@ class MainActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.rvSholat)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
+
+        val lokasi = mapOf<String, Any>(
+            "Jakarta" to mapOf<String, String>(
+                "lng" to "107.1485", "lan" to "-6.2474", "ev" to "8", "mo" to "2021-0"
+            ),
+            "Denpasar" to mapOf<String, String>(
+                "lng" to "115.2126", "lan" to "-8.6705", "ev" to "8", "mo" to "2021-0"
+            )
+        )
+
+        for (i in lokasi.keys) {
+
+        }
 
         Config().getService().getModelWaktu("106.816666", "-6.200000", "8", "2021-10").enqueue(object : Callback<JadwalModel> {
 
