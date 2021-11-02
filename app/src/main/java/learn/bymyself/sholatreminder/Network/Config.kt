@@ -3,7 +3,10 @@ package learn.bymyself.sholatreminder.Network
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 //class Config {
 //    fun retrofit(): Retrofit {
@@ -35,6 +38,11 @@ class Config {
 }
 
 interface ModelWaktu{
-    @GET("month.json?longitude=106.816666&latitude=-6.200000&elevation=8&month=2021-10")
-    fun getModelWaktu() : Call<JadwalModel>
+    @GET("month.json?")
+    fun getModelWaktu(
+        @Query("longitude") lng: String,
+        @Query("latitude") lat: String,
+        @Query("elevation") ev: String,
+        @Query("month") mo: String
+    ) : Call<JadwalModel>
 }

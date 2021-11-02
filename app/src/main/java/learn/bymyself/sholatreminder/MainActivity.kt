@@ -2,6 +2,8 @@ package learn.bymyself.sholatreminder
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val spinner: Spinner = findViewById(R.id.spinner)
+
         val dataTanggal = arrayListOf<String>()
         val dataSubuh = arrayListOf<String>()
         val dataDzuhur = arrayListOf<String>()
@@ -25,11 +29,18 @@ class MainActivity : AppCompatActivity() {
         val dataMagrib = arrayListOf<String>()
         val dataIsya = arrayListOf<String>()
 
+        //spinner
+        val spinnerAdapter = ArrayAdapter(this,
+            android.R.layout.simple_spinner_dropdown_item,
+            arrayListOf("Jakarta", "Bandung", "Surabaya"))
+        spinner.adapter = spinnerAdapter
+
+        //rv
         val recyclerView: RecyclerView = findViewById(R.id.rvSholat)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
 
-        Config().getService().getModelWaktu().enqueue(object : Callback<JadwalModel> {
+        Config().getService().getModelWaktu("106.816666", "-6.200000", "8", "2021-10").enqueue(object : Callback<JadwalModel> {
 
             override fun onResponse(call: Call<JadwalModel>, response: Response<JadwalModel>) {
                 val panggil1 = response.body()

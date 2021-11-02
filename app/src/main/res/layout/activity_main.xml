@@ -8,16 +8,11 @@
     tools:context=".MainActivity"
     android:padding="10dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ipt_pilihan"
+    <Spinner
+        android:id="@+id/spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp">
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Lihat berdasarkan"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="50dp"
+        android:layout_marginVertical="20dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
