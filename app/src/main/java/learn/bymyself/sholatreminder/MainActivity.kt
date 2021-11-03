@@ -2,84 +2,104 @@ package learn.bymyself.sholatreminder
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
+import android.text.method.TextKeyListener.clear
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import learn.bymyself.sholatreminder.Network.Config
 import learn.bymyself.sholatreminder.Network.JadwalModel
 import learn.bymyself.sholatreminder.Network.Location
+import learn.bymyself.sholatreminder.data.DataJakarta
+import learn.bymyself.sholatreminder.data.DataSurabaya
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 import kotlin.math.tan
 
 class MainActivity : AppCompatActivity() {
+
+    val dataTanggal = arrayListOf<String>()
+    val dataSubuh = arrayListOf<String>()
+    val dataDzuhur = arrayListOf<String>()
+    val dataAshar = arrayListOf<String>()
+    val dataMagrib = arrayListOf<String>()
+    val dataIsya = arrayListOf<String>()
+    private lateinit var recyclerView: RecyclerView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val spinner: Spinner = findViewById(R.id.spinner)
+        recyclerView = findViewById(R.id.rvSholat)
 
-        val dataTanggal = arrayListOf<String>()
-        val dataSubuh = arrayListOf<String>()
-        val dataDzuhur = arrayListOf<String>()
-        val dataAshar = arrayListOf<String>()
-        val dataMagrib = arrayListOf<String>()
-        val dataIsya = arrayListOf<String>()
+        val etCity : EditText = findViewById(R.id.etCity)
+        val btnSubmit : ImageButton = findViewById(R.id.btn_submit)
 
-        //spinner
-        val spinnerAdapter = ArrayAdapter(this,
-            android.R.layout.simple_spinner_dropdown_item,
-            arrayListOf("Jakarta", "Bandung", "Surabaya"))
-        spinner.adapter = spinnerAdapter
-
-        //rv
-        val recyclerView: RecyclerView = findViewById(R.id.rvSholat)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
-
-        val lokasi = mapOf<String, Any>(
-            "Jakarta" to mapOf<String, String>(
-                "lng" to "107.1485", "lan" to "-6.2474", "ev" to "8", "mo" to "2021-0"
-            ),
-            "Denpasar" to mapOf<String, String>(
-                "lng" to "115.2126", "lan" to "-8.6705", "ev" to "8", "mo" to "2021-0"
-            )
-        )
-
-        for (i in lokasi.keys) {
-
+        btnSubmit.setOnClickListener{
+            if (etCity.text.toString().lowercase(Locale.getDefault()) == "jakarta"){
+                Clear()
+                showData(DataJakarta().lat, DataJakarta().lng)
+                Toast.makeText(this, "Jakarta", Toast.LENGTH_LONG).show()
+            } else if (etCity.text.toString().lowercase(Locale.getDefault()) == "surabaya"){
+                Clear()
+                showData(DataSurabaya().lat, DataSurabaya().lng)
+                Toast.makeText(this, "Surabya", Toast.LENGTH_LONG).show()
+            }else {
+                val warning = "Masukkan dengan benar"
+                Toast.makeText(this, warning, Toast.LENGTH_LONG).show()
+            }
         }
+    }
+    fun showData(lng: String, lat: String, ev: String = "8", mo: String = "2021-10") {
 
-        Config().getService().getModelWaktu("106.816666", "-6.200000", "8", "2021-10").enqueue(object : Callback<JadwalModel> {
+        Config().getService().getModelWaktu(lat, lng, ev, mo)
+            .enqueue(object : Callback<JadwalModel> {
 
-            override fun onResponse(call: Call<JadwalModel>, response: Response<JadwalModel>) {
-                val panggil1 = response.body()
-                val panggil2 = panggil1?.results?.datetime
+                override fun onResponse(
+                    call: Call<JadwalModel>,
+                    response: Response<JadwalModel>
+                ) {
+                    val panggil1 = response.body()
+                    val panggil2 = panggil1?.results?.datetime
 
-                for (list in panggil2!!.indices){
-                    val waktuSholat = panggil2[list]?.times
-                    val tanggal = panggil2[list]?.date
+                    for (list in panggil2!!.indices) {
+                        val waktuSholat = panggil2[list]?.times
+                        val tanggal = panggil2[list]?.date
 
-                    dataTanggal.add(tanggal?.gregorian.toString())
-                    dataSubuh.add(waktuSholat?.fajr.toString())
-                    dataDzuhur.add(waktuSholat?.dhuhr.toString())
-                    dataAshar.add(waktuSholat?.asr.toString())
-                    dataMagrib.add(waktuSholat?.maghrib.toString())
-                    dataIsya.add(waktuSholat?.isha.toString())
+                        dataTanggal.add(tanggal?.gregorian.toString())
+                        dataSubuh.add(waktuSholat?.fajr.toString())
+                        dataDzuhur.add(waktuSholat?.dhuhr.toString())
+                        dataAshar.add(waktuSholat?.asr.toString())
+                        dataMagrib.add(waktuSholat?.maghrib.toString())
+                        dataIsya.add(waktuSholat?.isha.toString())
 
-                    recyclerView.adapter = Adapter(dataTanggal, dataSubuh, dataDzuhur, dataAshar, dataMagrib, dataIsya)
+                        recyclerView.adapter = Adapter(
+                            dataTanggal,
+                            dataSubuh,
+                            dataDzuhur,
+                            dataAshar,
+                            dataMagrib,
+                            dataIsya
+                        )
+                        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                        recyclerView.setHasFixedSize(true)
+                    }
                 }
-            }
+                override fun onFailure(call: Call<JadwalModel>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "$t", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
 
-            override fun onFailure(call: Call<JadwalModel>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "$t", Toast.LENGTH_SHORT ).show()
-            }
-
-        })
+    private fun Clear() {
+        dataSubuh.clear()
+        dataDzuhur.clear()
+        dataAshar.clear()
+        dataMagrib.clear()
+        dataIsya.clear()
+        dataTanggal.clear()
     }
 
 }

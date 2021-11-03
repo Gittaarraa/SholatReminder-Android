@@ -22,7 +22,7 @@ class Config {
 }
 
 interface ModelWaktu{
-    @GET("month.json?")
+    @GET("this_month.json?")
     fun getModelWaktu(
         @Query("longitude") lng: String,
         @Query("latitude") lat: String,
